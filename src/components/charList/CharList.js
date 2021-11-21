@@ -1,5 +1,5 @@
 import './charList.scss';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { useState, useEffect, useRef } from 'react';
 import Spinner from '../spinner/Spinner';
@@ -8,49 +8,36 @@ import PropTypes from 'prop-types';
 const CharList = (props) => {
 
     const [charList, setCharList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getAllCharacters } = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const onRequest = (offset) => {
-        onCharListLoading();
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
         updateCharList(offset);
     };
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true)
-    }
 
     const onCharListLoaded = (newCharList) => {
         let ended = false;
         if (newCharList.length < 9) { ended = true }
 
         setCharList(charlist => [...charList, ...newCharList]);
-        setLoading(loading => false);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended)
     }
 
-    const onError = () => {
-        setLoading(loading => false);
-        setError(error => true)
-    }
-
     const updateCharList = (offset) => {
-        marvelService
-            .getAllCharacters(offset)
+
+        getAllCharacters(offset)
             .then(onCharListLoaded)
-            .catch(onError)
     }
 
     const itemsRefs = useRef([]);
@@ -99,14 +86,13 @@ const CharList = (props) => {
 
     const items = renderItems(charList);
     const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner /> : null;
     console.log(offset)
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button
                 className="button button__main button__long"
                 style={{ 'display': charEnded ? 'none' : 'block' }}
