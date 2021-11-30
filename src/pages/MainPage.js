@@ -4,6 +4,7 @@ import CharInfo from "../components/charInfo/CharInfo";
 import ErrorBoundary from "../components/errorBoundary/ErrorBoundary";
 import decoration from '../resources/img/vision.png';
 import { useState } from "react";
+import { CSSTransition } from "react-transition-group";
 
 
 const MainPage = () => {
@@ -13,6 +14,7 @@ const MainPage = () => {
     const onCharSelected = (id) => {
         setChar(id)
     }
+
     return (
         <>
             <ErrorBoundary>

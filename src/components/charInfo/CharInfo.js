@@ -5,10 +5,12 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
+import { Link } from 'react-router-dom';
 
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
+    const [comcsID, setComicsID] = useState(null);
 
     const { loading, error, getCharacter, clearError } = useMarvelService();
 
@@ -30,7 +32,6 @@ const CharInfo = (props) => {
     const onCharLoaded = (char) => {
         setChar(char);
     }
-
 
     const skeleton = char || loading || error ? null : <Skeleton />
     const errorMessage = error ? <ErrorMessage /> : null;
@@ -56,7 +57,7 @@ const View = ({ char }) => {
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };
     }
-
+    let comicsID
     return (
         <>
             <div className="char__basics">
@@ -81,9 +82,12 @@ const View = ({ char }) => {
                 {comics.length > 0 ? null : "There is no comics for this character"}
                 {
                     comics.slice(0, 9).map((item, i) => {
+                        comicsID = item.resourceURI.slice(43);
                         return (
                             <li key={i} className="char__comics-item">
-                                {item.name}
+                                <Link to={`/comics/${comicsID}`}>
+                                    {item.name}
+                                </Link>
                             </li>
                         )
                     })
