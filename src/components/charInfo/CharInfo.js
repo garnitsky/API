@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
-    const [comcsID, setComicsID] = useState(null);
+    // const [comcsID, setComicsID] = useState(null);
 
     const { loading, error, getCharacter, clearError } = useMarvelService();
 
